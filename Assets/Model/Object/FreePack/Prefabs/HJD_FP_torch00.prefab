@@ -419,7 +419,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _name: Torch
   interactionTextUI: {fileID: 4391934564696429850}
-  isInteractable: 1
+  isLock: 1
   Firelight: {fileID: 8607779901407039434}
   isOn: 0
 --- !u!4 &6383920536124737602 stripped

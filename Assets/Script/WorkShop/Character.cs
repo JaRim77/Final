@@ -1,16 +1,18 @@
+using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public class Character : Identity
+public class Character : Identity, Idestoryable
 {
     int _health;
     public int health {
         get { return _health; }
         set { _health = Mathf.Clamp(value, 0, _maxHealth); }
     }
+    public int maxHealth { get => _maxHealth; set => _maxHealth = value; }
     [SerializeField]
     private int _maxHealth = 100;
-    public int maxHealth { get { return _maxHealth; }set { _maxHealth = value; } }
     public int Damage = 10;
     public int Deffent = 10;
     public float movementSpeed;
@@ -18,11 +20,13 @@ public class Character : Identity
     protected Rigidbody rb;
     Quaternion newRotation;
 
+    public event Action<Idestoryable> OnDestory;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public override void SetUP()
     {
         base.SetUP();
-        health = _maxHealth;
+        health = maxHealth;
         rb = GetComponent<Rigidbody>();
         animator = GetComponentInChildren<Animator>();
         if (animator == null)
@@ -30,16 +34,18 @@ public class Character : Identity
             Debug.LogError("Animator component not found on " + gameObject.name);
         }
     }
-    public void TakeDamage(int amount) {
+    public virtual void TakeDamage(int amount) {
         amount = Mathf.Clamp(amount- Deffent, 1, amount);
         health -= amount;
-        if (health <= 0) { 
+        if (health <= 0) {
+            OnDestory?.Invoke(this);
             Destroy(gameObject);
         }
     }
-    public void Heal(int amount)
+    public virtual void Heal(int amount)
     {
         health += amount;
+
     }
     protected virtual void Turn(Vector3 direction)
     {

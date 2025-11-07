@@ -87,8 +87,8 @@ public class Identity : MonoBehaviour
 
         return ("Name : " + Name +" x:" +positionX + " y:"+positionY);
     }
-    protected RaycastHit GetClosestInfornt()
-    {
+
+    protected RaycastHit GetClosestInfornt() {
 
         RaycastHit[] hits = Physics.SphereCastAll(transform.position, sphereRadius, transform.forward, maxDistance);
 
@@ -112,7 +112,7 @@ public class Identity : MonoBehaviour
     private void OnDrawGizmos()
     {
         Vector3 endPosition = transform.position + transform.forward * maxDistance;
-        Gizmos.color = new Color(1f, 0.5f, 0f, 0.5f);
+        Gizmos.color = new Color(1f, 0.5f, 0f, 0.5f); 
         Gizmos.DrawWireSphere(endPosition, sphereRadius);
 
         if (_IdentityInFront != null)

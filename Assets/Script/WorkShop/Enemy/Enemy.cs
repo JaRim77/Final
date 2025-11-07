@@ -45,4 +45,15 @@ public class Enemy : Character
         }
         
     }
+
+    public override void TakeDamage(int amount)
+    {
+        health -= amount;
+        if (health <= 0)
+        {
+            GameManager.instance.AddScore(10);
+            Destroy(gameObject);
+            
+        }
+    }
 }
