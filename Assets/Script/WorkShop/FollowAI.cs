@@ -1,24 +1,20 @@
 using UnityEngine;
-
 using UnityEngine.AI;
 
 public class FollowAI : MonoBehaviour
 {
-
-    NavMeshAgent agent;
-
-    
+    private NavMeshAgent agent;
+    Animator animator;
 
     public GameObject objectToFollow;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void Start()
     {
         agent = GetComponent<NavMeshAgent>();
-        
+        animator = GetComponent<Animator>();
+
     }
 
-    // Update is called once per frame
     void Update()
     {
         float distance = Vector3.Distance(transform.position, objectToFollow.transform.position);
@@ -26,25 +22,26 @@ public class FollowAI : MonoBehaviour
         if (distance < 5)
         {
             agent.isStopped = true;
-            
-
+            animator.SetInteger("Idle", 0);
         }
-        else if(distance >= 5 && distance < 13)
+        else if (distance >= 5 && distance < 13)
         {
             agent.isStopped = false;
             agent.SetDestination(objectToFollow.transform.position);
-           
-            agent.speed = 3;
+            animator.SetInteger("Walk", 1);
 
+            agent.speed = 3;
         }
         else if (distance < 13)
         {
             agent.isStopped = false;
             agent.SetDestination(objectToFollow.transform.position);
-
-            
+            animator.SetInteger("Run", 2);
 
             agent.speed = 6;
         }
+
     }
 }
+
+        
