@@ -48,6 +48,23 @@ public class Identity : MonoBehaviour
             return _player; 
         }
     }
+
+    Enemy _enemy;
+    protected Enemy enemy
+    {
+        get
+        {
+            if (_enemy == null)
+            {
+                _enemy = FindAnyObjectByType<Enemy>();
+                if (_enemy == null)
+                {
+                    Debug.LogWarning("No Enemy found in the scene.");
+                }
+            }
+            return _enemy;
+        }
+    }
     private float distanFormPlayer;
 
     private GameObject _IdentityInFront;
