@@ -12,7 +12,8 @@ public class Ally : Character
     public int bondPoints = 0;
     public event System.Action<Ally> OnBondChanged;
 
-    private NavMeshAgent agent;
+
+    NavMeshAgent agent;
     private Character currentEnemy;
     private AllyCommand currentCommand = AllyCommand.Follow;
 
@@ -73,10 +74,12 @@ public class Ally : Character
             }
             else currentEnemy = null;
         }
+
     
     }
 
-    private void FollowPlayer()
+
+    public void FollowPlayer()
     {
         float distance = Vector3.Distance(transform.position, _player.transform.position);
         if (distance > followDistance)
@@ -85,7 +88,6 @@ public class Ally : Character
             agent.SetDestination(_player.transform.position);
             animator.SetBool("Moving", true);
             animator.SetFloat("Velocity", 1);
-         
         }
         else
         {
