@@ -1380,7 +1380,12 @@ PrefabInstance:
       propertyPath: m_Name
       value: Erika Archer With Bow Arrow
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 5866666021909216657, guid: 444f3cc723b7b864bbb419e2b197a5df, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 5866666021909216657, guid: 444f3cc723b7b864bbb419e2b197a5df, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -7115,7 +7120,7 @@ Transform:
   m_GameObject: {fileID: 4071840969154863177}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.001, y: 0.00000011920929, z: -2.4873312}
+  m_LocalPosition: {x: -1.001, y: 0.61, z: -2.4873312}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -7232,8 +7237,9 @@ GameObject:
   - component: {fileID: 7289614421173084301}
   - component: {fileID: 7289614421173084300}
   - component: {fileID: 7289614421173084299}
-  - component: {fileID: 7289614421173084298}
   - component: {fileID: 7289614421173084302}
+  - component: {fileID: 7289614421173084303}
+  - component: {fileID: 7289614421173084304}
   m_Layer: 0
   m_Name: HumanF_Model
   m_TagString: Untagged
@@ -7817,7 +7823,7 @@ Animator:
   m_GameObject: {fileID: 4071840969154863177}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 444f3cc723b7b864bbb419e2b197a5df, type: 3}
-  m_Controller: {fileID: 22100000, guid: f9d4ca33479135241af14f7c203ee2c2, type: 2}
+  m_Controller: {fileID: 9100000, guid: 1bd48d36d3280cc4f966198224c78b9c, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
@@ -7829,22 +7835,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &7289614421173084298
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4071840969154863177}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fff1bc67e4cddc243a09a142d46f664d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  objectToFollow: {fileID: 1729820278}
-  velocity: 0
-  desiredVelocity: 0
-  path: 1
 --- !u!143 &7289614421173084299
 CharacterController:
   m_ObjectHideFlags: 0
@@ -7861,7 +7851,7 @@ CharacterController:
     m_Bits: 0
   m_LayerOverridePriority: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Height: 1.8
   m_Radius: 0.25
@@ -7935,12 +7925,52 @@ MonoBehaviour:
   _maxHealth: 100
   Damage: 10
   Deffent: 10
-  movementSpeed: 5
+  movementSpeed: 100
+  _player: {fileID: 1604285098}
   player: {fileID: 1729820280}
-  followDistance: 3
+  followDistance: 5
   attackRange: 2
   detectRange: 10
-  bondPoints: 0
+  bondPoints: 5
+--- !u!114 &7289614421173084303
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4071840969154863177}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fff1bc67e4cddc243a09a142d46f664d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  objectToFollow: {fileID: 1729820278}
+  velocity: 0
+  desiredVelocity: 0
+  path: 1
+--- !u!136 &7289614421173084304
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4071840969154863177}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 1
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!4 &7434005452256806001
 Transform:
   m_ObjectHideFlags: 0

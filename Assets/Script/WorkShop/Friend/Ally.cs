@@ -4,6 +4,7 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 public class Ally : Character
 {
+    public Transform _player;
     public Player player;
     public float followDistance = 3f;
     public float attackRange = 2f;
@@ -19,17 +20,38 @@ public class Ally : Character
     {
         SetUP();
         agent = GetComponent<NavMeshAgent>();
+        animator = GetComponent<Animator>();
         agent.speed = movementSpeed;
     }
 
     void Update()
     {
-        if (player == null) return;
-        HandleEnemy();
-        FollowPlayer();
+        if (player == null || _player == null) return;
 
+        // 1. ตรวจว่ามีศัตรูรึเปล่า
+        if (currentEnemy != null)
+        {
+            HandleEnemy(); // ไล่และโจมตีศัตรู
+        }
+        else
+        {
+            // 2. ถ้าไม่มีศัตรู ? กลับไปตาม Player
+            FollowPlayer();
+
+            // 3. ตรวจหาศัตรูใหม่รอบตัว
+            DetectEnemy();
+        }
+
+        // 4. ถ้าอยู่ในโหมดเก็บของ
         if (currentCommand == AllyCommand.CollectItem)
             TryCollectNearbyItem();
+
+        //if (player == null) return;
+        //HandleEnemy();
+        //FollowPlayer();
+
+        //if (currentCommand == AllyCommand.CollectItem)
+        //    TryCollectNearbyItem();
     }
 
     private void HandleEnemy()
@@ -41,7 +63,7 @@ public class Ally : Character
             if (dist <= attackRange)
             {
                 agent.isStopped = true;
-                Animator.SetTrigger("Attack");
+                animator.SetTrigger("Trigger");
                 currentEnemy.TakeDamage(Damage);
             }
             else if (dist <= detectRange)
@@ -51,21 +73,25 @@ public class Ally : Character
             }
             else currentEnemy = null;
         }
+    
     }
 
     private void FollowPlayer()
     {
-        float distance = Vector3.Distance(transform.position, player.transform.position);
+        float distance = Vector3.Distance(transform.position, _player.transform.position);
         if (distance > followDistance)
         {
             agent.isStopped = false;
-            agent.SetDestination(player.transform.position);
-            Animator.SetBool("isMoving", true);
+            agent.SetDestination(_player.transform.position);
+            animator.SetBool("Moving", true);
+            animator.SetFloat("Velocity", 1);
+         
         }
         else
         {
             agent.isStopped = true;
-            Animator.SetBool("isMoving", false);
+            animator.SetBool("Moving", false);
+            animator.SetFloat("Velocity", 0);
         }
     }
 
