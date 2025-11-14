@@ -5,6 +5,7 @@ using UnityEngine;
 public class AllyController : MonoBehaviour
 {
     public Ally ally;
+    private AllyCommand currentCommand = AllyCommand.None;
 
     void Update()
     {
@@ -12,25 +13,40 @@ public class AllyController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.F))
         {
-            ally.FollowPlayer();
+            currentCommand = AllyCommand.Follow;
+            //ally.FollowPlayer();
             Debug.Log("Follow Me!");
         }
 
 
         if (Input.GetKeyDown(KeyCode.G))
         {
-            ally.HandleEnemy();
+            currentCommand = AllyCommand.Attack;
+            // ally.HandleEnemy();
             Debug.Log("Attack!!");
         }
 
         if (Input.GetKeyDown(KeyCode.H))
         {
-            ally.TryCollectNearbyItem();
+            currentCommand = AllyCommand.CollectItem;
+            //ally.TryCollectNearbyItem();
             Debug.Log("Secrch for items");
         }
-        if (Input.GetKeyDown(KeyCode.B))
+
+        switch (currentCommand)
         {
-            ally.ModifyBond(10); // เพิ่มค่าความสัมพันธ์
+            case AllyCommand.Follow:
+                ally.FollowPlayer();
+                break;
+            case AllyCommand.Attack:
+                ally.HandleEnemy();
+                break;
+            case AllyCommand.CollectItem:
+                ally.TryCollectNearbyItem();
+                break;
+            case AllyCommand.None:
+                // ทำอะไรเมื่อไม่มีคำสั่งก็ได้ หรือว่างไว้
+                break;
         }
     }
 }

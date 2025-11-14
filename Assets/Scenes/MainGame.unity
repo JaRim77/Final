@@ -2400,7 +2400,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.5151829
+  m_Radius: 1.56
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &814405415
 GameObject:
@@ -3258,6 +3258,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: RedVial
       objectReference: {fileID: 0}
+    - target: {fileID: 6771646125075274062, guid: 8db164f48fcdae64180ebf0ce2bb5d92, type: 3}
+      propertyPath: m_Radius
+      value: 1.3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3965,7 +3969,7 @@ NavMeshAgent:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1729820278}
-  m_Enabled: 1
+  m_Enabled: 0
   m_AgentTypeID: 0
   m_Radius: 0.5
   m_Speed: 3.5

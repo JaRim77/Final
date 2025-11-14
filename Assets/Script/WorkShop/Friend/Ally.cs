@@ -20,6 +20,7 @@ public class Ally : Character
     public int bondPoints = 0;
     public event System.Action<Ally> OnBondChanged;
 
+    private Item itemTarget;
     private NavMeshAgent agent;
     private Character currentEnemy;
     private AllyCommand currentCommand = AllyCommand.Follow;
@@ -96,15 +97,15 @@ public class Ally : Character
         {
             agent.isStopped = false;
             agent.SetDestination(_player.transform.position);
-            animator.SetBool("Moving", true);
-            animator.SetFloat("Velocity", agent.velocity.magnitude);
+            
+            animator.SetFloat("Speed", agent.velocity.magnitude);
 
         }
         else
         {
             agent.isStopped = true;
-            animator.SetBool("Moving", false);
-            animator.SetFloat("Velocity", 0);
+
+            animator.SetFloat("Speed", 0);
         }
     }
 
@@ -124,20 +125,73 @@ public class Ally : Character
 
     public void TryCollectNearbyItem()
     {
-        Collider[] hits = Physics.OverlapSphere(transform.position, 2f);
-        foreach (var hit in hits)
+        if (itemTarget == null)
         {
-            Item item = hit.GetComponent<Item>();
-            if (item != null)
+            // หา item ใกล้สุด
+            Collider[] hits = Physics.OverlapSphere(transform.position, 10f);
+            float minDist = Mathf.Infinity;
+
+            foreach (var hit in hits)
             {
-                player.AddItem(item);
-                Destroy(item.gameObject);
-                ModifyBond(5);
-                currentCommand = AllyCommand.Follow;
-                break;
+                Item item = hit.GetComponent<Item>();
+                if (item != null)
+                {
+                    float dist = Vector3.Distance(transform.position, item.transform.position);
+                    if (dist < minDist)
+                    {
+                        minDist = dist;
+                        itemTarget = item;
+                    }
+                }
             }
+
+            if (itemTarget == null)
+            {
+                currentCommand = AllyCommand.Follow;
+                return;
+            }
+
+            agent.isStopped = false;
+            agent.SetDestination(itemTarget.transform.position);
+            animator.SetBool("Moving", true);
+
+            Debug.Log("Moving to item: " + itemTarget.name);
+            return;
+        }
+
+        // ตรวจสอบระยะเก็บ
+        float distance = Vector3.Distance(transform.position, itemTarget.transform.position);
+        Debug.Log("Distance to item: " + distance);
+
+        if (distance <= 2f) // ระยะเก็บ
+        {
+            if (itemTarget != null)
+            {
+                // ? ใช้ OnCollect ของ Item แทน AddItem
+                itemTarget.OnCollect(player);
+
+                Destroy(itemTarget.gameObject);
+                ModifyBond(5);
+
+                Debug.Log("Collected item: " + itemTarget.name);
+            }
+
+            itemTarget = null;
+            currentCommand = AllyCommand.Follow;
+
+            agent.isStopped = true;
+            animator.SetBool("Moving", false);
+        }
+        else
+        {
+            agent.isStopped = false;
+            agent.SetDestination(itemTarget.transform.position);
+            animator.SetBool("Moving", true);
+            animator.SetFloat("Velocity", agent.velocity.magnitude);
         }
     }
+
+
 
     public void SetCommand(AllyCommand cmd) => currentCommand = cmd;
     public void ModifyBond(int delta)
