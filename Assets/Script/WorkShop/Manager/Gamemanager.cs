@@ -9,9 +9,20 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
     // 1. Private Static Field (The Singleton Instance)
     // ใช้ backing field เพื่อควบคุมการเข้าถึง
-
+    private static GameManager _instance;
+    public static GameManager Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                Debug.LogError("GameManager instance is null! Is it in the scene?");
+            }
+            return _instance;
+        }
+    }
     // 2. Public Static Property (Global Access Point)
-   
+
     [Header("Game State")]
     public int currentScore = 0;
     public bool isGamePaused = false;
@@ -48,7 +59,31 @@ public class GameManager : MonoBehaviour
         currentScore += amount;
         scoreText.text = currentScore.ToString();
     }
+    /*public void AddScore(int amount)
+    {
+        currentScore += amount;
 
+        if (scoreText != null)
+            scoreText.text = currentScore.ToString();
+
+        Debug.Log($"Money updated: {currentScore}");
+    }*/
+    public bool SpendScore(int cost)
+    {
+        if (currentScore >= cost)
+        {
+            currentScore -= cost;
+
+            if (scoreText != null)
+                scoreText.text = currentScore.ToString();
+
+            Debug.Log($"Buy Success. Money Left: {currentScore}");
+            return true;
+        }
+
+        Debug.Log("Not enough money!");
+        return false;
+    }
     public void TogglePause()
     {
        isGamePaused = !isGamePaused;
