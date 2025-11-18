@@ -20,10 +20,14 @@ public class Ally : Character
     public int bondPoints = 0;
     public event System.Action<Ally> OnBondChanged;
 
+    public float attackCooldown = 1f;   
+    private float lastAttackTime = 0f;
     private Item itemTarget;
     private NavMeshAgent agent;
     private Character currentEnemy;
     private AllyCommand currentCommand = AllyCommand.Follow;
+
+    protected float timer = 0f;
 
     void Start()
     {
@@ -36,7 +40,9 @@ public class Ally : Character
     void Update()
     {
 
+ 
     }
+
 
 
     //    if (player == null || _player == null) return;
@@ -69,25 +75,42 @@ public class Ally : Character
 
     public void HandleEnemy()
     {
-        if (currentEnemy == null) DetectEnemy();
+        if (currentEnemy == null)
+            DetectEnemy();
+
         if (currentEnemy != null)
         {
             float dist = Vector3.Distance(transform.position, currentEnemy.transform.position);
+
             if (dist <= attackRange)
             {
                 agent.isStopped = true;
-                animator.SetTrigger("Trigger");
-                currentEnemy.TakeDamage(Damage);
+
+                // ‡™Á§«Ë“æ√ÈÕ¡‚®¡µ’À√◊Õ¬—ß
+                if (Time.time >= lastAttackTime + attackCooldown)
+                {
+                    animator.SetTrigger("Attack");
+
+                    // ‚®¡µ’µ“¡æ≈—ß‚®¡µ’ Damage ¢Õß Ally
+                    currentEnemy.TakeDamage(Damage);
+
+                    lastAttackTime = Time.time; // √’‡´Áµ§Ÿ≈¥“«πÏ
+
+                    Debug.Log("Attack" + (Damage));
+                }
             }
             else if (dist <= detectRange)
             {
                 agent.isStopped = false;
                 agent.SetDestination(currentEnemy.transform.position);
             }
-            else currentEnemy = null;
+            else
+            {
+                currentEnemy = null;
+            }
         }
-
     }
+
 
     public void FollowPlayer()
     {
