@@ -1,14 +1,11 @@
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
-// กำหนดให้เป็น sealed เพื่อป้องกันการสืบทอด
-public class GameManager : MonoBehaviour
+// กำหนดให้เป็น sealed เพื่อไม่ให้สืบทอด
+public sealed class GameManager : MonoBehaviour
 {
-    public static GameManager instance;
-    // 1. Private Static Field (The Singleton Instance)
-    // ใช้ backing field เพื่อควบคุมการเข้าถึง
+    // Singleton Instance
     private static GameManager _instance;
     public static GameManager Instance
     {
@@ -21,45 +18,50 @@ public class GameManager : MonoBehaviour
             return _instance;
         }
     }
-    // 2. Public Static Property (Global Access Point)
 
     [Header("Game State")]
-    public int currentScore = 0;
+    public int currentScore = 0;  // ใช้เป็น "เงิน" ด้วย
     public bool isGamePaused = false;
 
     [Header("UI Game")]
     public GameObject pauseMenuUI;
-    public TMP_Text scoreText;
+    public TMP_Text scoreText;   // แสดงเงิน (currentScore)
     public Slider HPBar;
 
-    // 3. Private Constructor Logic (ใช้ Awake() แทน Constructor ปกติใน Unity)
     private void Awake()
     {
-        // ตรวจสอบว่ามี Instance อยู่แล้วหรือไม่
-       if(instance == null)
+        if (_instance == null)
         {
-            instance = this;
-            DontDestroyOnLoad(gameObject);
+            _instance = this;
+            DontDestroyOnLoad(gameObject); // ให้ GameManager อยู่ข้าม Scene
+            Debug.Log("GameManager Singleton Initialized.");
         }
-       else if(instance != this) 
+        else
         {
-             Destroy(gameObject);
+            Debug.Log("Duplicate GameManager found. Destroying self.");
+            Destroy(gameObject);
         }
     }
 
-    // ------------------- Singleton Functionality -------------------
+    // ------------------- GAMEPLAY & UI UPDATE -------------------
 
+    // อัปเดต UI หลอดเลือด
     public void UpdateHealthBar(int currentHealth, int maxHealth)
     {
-       HPBar.value = currentHealth;
-       HPBar.maxValue = maxHealth;
+        if (HPBar != null)
+        {
+            HPBar.maxValue = maxHealth;
+            HPBar.value = currentHealth;
+            Debug.Log($"Health updated: {currentHealth}/{maxHealth}");
+        }
+        else
+        {
+            Debug.LogWarning("HPBar reference is missing in GameManager.");
+        }
     }
+
+    // ใช้เพิ่ม "เงิน" + อัปเดต UI
     public void AddScore(int amount)
-    {
-        currentScore += amount;
-        scoreText.text = currentScore.ToString();
-    }
-    /*public void AddScore(int amount)
     {
         currentScore += amount;
 
@@ -67,7 +69,9 @@ public class GameManager : MonoBehaviour
             scoreText.text = currentScore.ToString();
 
         Debug.Log($"Money updated: {currentScore}");
-    }*/
+    }
+
+    // ใช้ตัด "เงิน" ตอนซื้อของ
     public bool SpendScore(int cost)
     {
         if (currentScore >= cost)
@@ -84,14 +88,20 @@ public class GameManager : MonoBehaviour
         Debug.Log("Not enough money!");
         return false;
     }
+
+    // เปิด/ปิดเมนู Pause
     public void TogglePause()
     {
-       isGamePaused = !isGamePaused;
-        Time.timeScale = isGamePaused ? 0 : 1;
-        pauseMenuUI.SetActive(isGamePaused);
+        isGamePaused = !isGamePaused;
+        Time.timeScale = isGamePaused ? 0f : 1f;
+
+        if (pauseMenuUI != null)
+            pauseMenuUI.SetActive(isGamePaused);
+
+        Debug.Log($"Game Paused: {isGamePaused}");
     }
 
-    public void Update()
+    private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {

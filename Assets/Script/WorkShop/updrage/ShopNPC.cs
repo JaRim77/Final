@@ -17,6 +17,7 @@ public class ShopNPC : Stuff, IInteractable
         if (isLock)
         {
             shopUI.SetActive(true);
+            MouseManager.Instance.UnlockMouse();   // ⭐ ปลดเมาส์
             Debug.Log("🛒 เปิดร้านค้า");
         }
     }

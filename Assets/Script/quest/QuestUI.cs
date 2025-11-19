@@ -14,32 +14,40 @@ public class QuestUI : MonoBehaviour
     public void SetValue(QuestTracker tracker, int idx)
     {
         index = idx;
-        gameObject.SetActive(true);
 
-        if (title != null) title.text = tracker.questName;
-        if (description != null) description.text = tracker.questDescription;
+        // ❌ ห้ามเปิด-ปิด Slot ด้วย code
+        // gameObject.SetActive(true);
+
+        if (title != null)
+            title.text = tracker.questName;
+
+        if (description != null)
+            description.text = tracker.questDescription;
 
         UpdateObjectiveList(tracker);
 
-        if (completeButton != null) completeButton.interactable = tracker.questCanComplete;
+        if (completeButton != null)
+            completeButton.interactable = tracker.questCanComplete;
     }
 
     public void UpdateProgress(QuestTracker tracker)
     {
         UpdateObjectiveList(tracker);
 
-        if (completeButton != null) completeButton.interactable = tracker.questCanComplete;
+        if (completeButton != null)
+            completeButton.interactable = tracker.questCanComplete;
     }
 
     private void UpdateObjectiveList(QuestTracker tracker)
     {
         if (objectiveList == null)
         {
-            Debug.LogWarning("objectiveList is not assigned in QuestUI!");
+            Debug.LogWarning("ObjectiveList not assigned in QuestUI!");
             return;
         }
 
-        objectiveList.text = "";
+        objectiveList.text = "";  // ล้างก่อน
+
         if (tracker.objectives != null)
         {
             foreach (Objective obj in tracker.objectives)
@@ -51,8 +59,8 @@ public class QuestUI : MonoBehaviour
 
     public void CompleteQuest()
     {
-        // ตรวจสอบว่า quest สามารถทำเสร็จได้
         QuestTracker tracker = QuestManager.instance.ongoingQuest[index];
+
         if (tracker != null && tracker.questCanComplete)
         {
             QuestManager.instance.CompleteQuest(index);
@@ -63,7 +71,6 @@ public class QuestUI : MonoBehaviour
         }
     }
 
-
     public void CancelQuest()
     {
         if (QuestManager.instance != null)
@@ -72,11 +79,19 @@ public class QuestUI : MonoBehaviour
 
     public void ClearValue()
     {
-        gameObject.SetActive(false);
+        // ❌ ห้ามปิด Slot 
+        // gameObject.SetActive(false);
 
-        if (title != null) title.text = "";
-        if (description != null) description.text = "";
-        if (objectiveList != null) objectiveList.text = "";
-        if (completeButton != null) completeButton.interactable = false;
+        if (title != null)
+            title.text = "";
+
+        if (description != null)
+            description.text = "";
+
+        if (objectiveList != null)
+            objectiveList.text = "";
+
+        if (completeButton != null)
+            completeButton.interactable = false;
     }
 }

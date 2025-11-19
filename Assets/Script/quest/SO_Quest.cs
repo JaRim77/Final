@@ -8,6 +8,7 @@ public class SO_Quest : ScriptableObject
     [TextArea] public string questDescription;
 
     public Objective[] objectives;
+    public int rewardMoney = 50;
 
     public int goldReward;
     public int expReward;

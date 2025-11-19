@@ -24,6 +24,8 @@ public class Ally : Character
     private NavMeshAgent agent;
     private Character currentEnemy;
     private AllyCommand currentCommand = AllyCommand.Follow;
+    public float attackCooldown = 1f;
+    private float lastAttackTime = 0f;
 
     void Start()
     {
@@ -76,9 +78,16 @@ public class Ally : Character
             if (dist <= attackRange)
             {
                 agent.isStopped = true;
-                animator.SetTrigger("Trigger");
-                currentEnemy.TakeDamage(Damage);
+
+                if (Time.time - lastAttackTime >= attackCooldown)
+                {
+                    animator.SetTrigger("Trigger");
+                    currentEnemy.TakeDamage(Damage);
+
+                    lastAttackTime = Time.time;
+                }
             }
+
             else if (dist <= detectRange)
             {
                 agent.isStopped = false;

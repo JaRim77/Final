@@ -1,40 +1,84 @@
 ﻿using UnityEngine;
+using TMPro;
+using System.Collections;
 
-public class QuestGiver : MonoBehaviour
+public class QuestGiver : Stuff, IInteractable
 {
     public SO_Quest quest;
 
-    private bool playerInRange = false;
+    [Header("Dialogue Settings")]
+    public TMP_Text WordTextUI;
+    public string[] dialogues;
+    private int dialogueIndex = 0;
+    private bool dialogueFinished = false;
 
-    private void Update()
+    private bool canPress = true;
+
+    public bool isInteractable { get => isLock; set => isLock = value; }
+
+    public override void SetUP()
     {
-        // ถ้า player อยู่ใน range และกด F
-        if (playerInRange && Input.GetKeyDown(KeyCode.F))
+        base.SetUP();
+
+        if (WordTextUI != null)
+            WordTextUI.gameObject.SetActive(false);
+    }
+
+    public void Interact(Player player)
+    {
+        if (!canPress) return;
+        StartCoroutine(PressCooldown());
+
+        // ⭐ ถ้ายังพูดไม่จบ → พูดทีละประโยค
+        if (!dialogueFinished)
         {
-            if (QuestManager.instance != null)
+            ShowDialogue(dialogues[dialogueIndex]);
+            dialogueIndex++;
+
+            // ⭐ ถ้าพูดครบแล้ว → ให้เควสต์
+            if (dialogueIndex >= dialogues.Length)
             {
-                QuestManager.instance.AcceptQuest(quest);
+                dialogueFinished = true;
+                Invoke(nameof(AutoGiveQuest), 2f);
             }
-            else
-            {
-                Debug.LogWarning("QuestManager instance not found in scene!");
-            }
+
+            return;
+        }
+
+        // ⭐ หลังให้เควสต์แล้ว — ปิดบทสนทนา
+        WordTextUI.gameObject.SetActive(false);
+    }
+
+    IEnumerator PressCooldown()
+    {
+        canPress = false;
+        yield return new WaitForSeconds(0.3f);
+        canPress = true;
+    }
+
+    void ShowDialogue(string text)
+    {
+        if (WordTextUI != null)
+        {
+            WordTextUI.text = text;
+            WordTextUI.gameObject.SetActive(true);
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    void AutoGiveQuest()
     {
-        if (other.CompareTag("Player"))
-        {
-            playerInRange = true;
-        }
-    }
+        WordTextUI.gameObject.SetActive(false);
 
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Player"))
+        if (QuestManager.instance != null && quest != null)
         {
-            playerInRange = false;
+            QuestManager.instance.AcceptQuest(quest);
+            Debug.Log("เควสต์ถูกให้โดยอัตโนมัติ: " + quest.questName);
         }
+
+        // ⭐ ปลดล็อก Ally หลังรับเควส
+        FindObjectOfType<AllyController>()?.UnlockAlly();
+
+        // ⭐ ไม่ให้รับเควสต์ซ้ำ
+        isLock = false;
     }
 }

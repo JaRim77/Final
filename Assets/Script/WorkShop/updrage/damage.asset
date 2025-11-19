@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   upgradeName: Damage
   cost: 22
-  increaseAmount: 0
+  increaseAmount: 10
   type: 0

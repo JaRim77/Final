@@ -33,22 +33,35 @@ public class Player : Character
     public void AddItem(Item item) {
         inventory.Add(item);
     }
-    
+
     private void HandleInput()
     {
-        float x = Input.GetAxis("Horizontal");
-        float y = Input.GetAxis("Vertical");
+        float x = Input.GetAxisRaw("Horizontal");
+        float y = Input.GetAxisRaw("Vertical");
 
-        _inputDirection = new Vector3(x, 0, y);
-        if (Input.GetMouseButtonDown(0)) {
+
+        // 1) ดึงทิศกล้องบนพื้น (ไม่รวมความสูง)
+        Transform cam = Camera.main.transform;
+        Vector3 camForward = cam.forward;
+        camForward.y = 0;
+        camForward.Normalize();
+
+        Vector3 camRight = cam.right;
+        camRight.y = 0;
+        camRight.Normalize();
+
+        // 2) ประกอบทิศเดินตามกล้อง
+        _inputDirection = (camForward * y + camRight * x).normalized;
+
+        // ระบบโจมตี
+        if (Input.GetMouseButtonDown(0))
             _isAttacking = true;
-        }
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            _isInteract = true;
-        }
 
+        // ระบบกดคุย / interact
+        if (Input.GetKeyDown(KeyCode.E))
+            _isInteract = true;
     }
+
     public void Attack(bool isAttacking) {
         if (isAttacking) {
             animator.SetTrigger("Attack");
@@ -77,13 +90,13 @@ public class Player : Character
     public override void TakeDamage(int amount)
     {
         base.TakeDamage(amount);
-        GameManager.instance.UpdateHealthBar(health, maxHealth);
+        GameManager.Instance.UpdateHealthBar(health, maxHealth);
 
     }
     public override void Heal(int amount)
     {
         base.Heal(amount);
-        GameManager.instance.UpdateHealthBar(health, maxHealth);
+        GameManager.Instance.UpdateHealthBar(health, maxHealth);
 
     }
 

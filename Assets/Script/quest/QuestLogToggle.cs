@@ -2,20 +2,20 @@
 
 public class QuestLogToggle : MonoBehaviour
 {
-    [Header("Panel that contains all QuestUI elements")]
-    public GameObject questPanel; // ใส่ Panel หลักที่มี QuestUI ทั้งหมด
+    [Header("Quest Panel")]
+    public GameObject questPanel;
 
-    private bool isOpen = false; // เริ่มต้นให้ UI หายไป
+    private bool isOpen = false;
 
     private void Start()
     {
         if (questPanel != null)
-            questPanel.SetActive(isOpen); // เริ่มเกม UI หายไป
+            questPanel.SetActive(false);
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Q)) // กด Q เพื่อสลับเปิด/ปิด
+        if (Input.GetKeyDown(KeyCode.Q))
         {
             ToggleQuestUI();
         }
@@ -25,10 +25,16 @@ public class QuestLogToggle : MonoBehaviour
     {
         if (questPanel == null) return;
 
-        isOpen = !isOpen; // สลับสถานะ
+        isOpen = !isOpen;
         questPanel.SetActive(isOpen);
 
-        if (isOpen) Debug.Log("Quest UI Opened");
-        else Debug.Log("Quest UI Closed");
+        if (isOpen)
+        {
+            MouseManager.Instance.UnlockMouse();   // ⭐ ใช้ MouseManager
+        }
+        else
+        {
+            MouseManager.Instance.LockMouse();     // ⭐ ใช้ MouseManager
+        }
     }
 }

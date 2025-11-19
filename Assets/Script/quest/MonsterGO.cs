@@ -1,35 +1,22 @@
 ﻿using UnityEngine;
 
-public class MonsterGO : MonoBehaviour
+public class MonsterGO : Character
 {
     public string monsterID;
-    public int maxHealth = 1; // จำนวน HP ของมอนสเตอร์
-    private int currentHealth;
 
-    private void Awake()
+    public override void TakeDamage(int amount)
     {
-        currentHealth = maxHealth;
-    }
+        health -= amount;
 
-    // ฟังก์ชันให้ Player เรียกเพื่อทำ Damage
-    public void TakeDamage(int damage)
-    {
-        currentHealth -= damage;
-        if (currentHealth <= 0)
+        if (health <= 0)
         {
-            Die();
+            // แจ้งเควสต์
+            if (QuestManager.instance != null)
+            {
+                QuestManager.instance.UpdateQuestProgress(ObjectiveType.Kill, monsterID);
+                GameManager.Instance.AddScore(10);
+            }
+            Destroy(gameObject);
         }
-    }
-
-    private void Die()
-    {
-        // อัพเดต quest progress เมื่อมอนถูกฆ่า
-        if (QuestManager.instance != null)
-        {
-            QuestManager.instance.UpdateQuestProgress(ObjectiveType.Kill, monsterID);
-        }
-
-        // ทำลาย GameObject มอนสเตอร์
-        Destroy(gameObject);
     }
 }

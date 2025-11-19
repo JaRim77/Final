@@ -8,6 +8,7 @@ public class Enemy : Character
     private float TimeToAttack = 1f;
     protected State currentState = State.idel;
     protected float timer = 0f;
+
     private void Update()
     {
         if (player == null)
@@ -51,7 +52,7 @@ public class Enemy : Character
         health -= amount;
         if (health <= 0)
         {
-            GameManager.instance.AddScore(10);
+            GameManager.Instance.AddScore(10);
             Destroy(gameObject);
             
         }

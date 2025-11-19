@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class QuestManager : MonoBehaviour
+public class QuestManager1 : MonoBehaviour
 {
     private List<IQuest> _activeObjectives = new List<IQuest>();
 

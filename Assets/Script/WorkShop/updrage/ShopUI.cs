@@ -33,6 +33,7 @@ public class ShopUI : MonoBehaviour
     public void Close()
     {
         gameObject.SetActive(false);
+        MouseManager.Instance.LockMouse();   // ⭐ ล็อกเมาส์กลับ
     }
     public void UpdateMoneyUI()
     {
@@ -66,5 +67,6 @@ public class ShopUI : MonoBehaviour
         {
             Debug.Log("เงินไม่พอ!");
         }
+
     }
 }

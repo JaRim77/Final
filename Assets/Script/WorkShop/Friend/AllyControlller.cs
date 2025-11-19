@@ -1,53 +1,65 @@
-using System.Collections.Generic;
-using UnityEngine;
-
+﻿using UnityEngine;
 
 public class AllyController : MonoBehaviour
 {
     public Ally ally;
+
+    // 🔒 เริ่มเกม Ally ยังใช้ไม่ได้
+    public bool allyUnlocked = false;
+
     private AllyCommand currentCommand = AllyCommand.None;
 
     void Update()
     {
         if (ally == null) return;
 
+        // ❌ ถ้ายังไม่ปลดล็อก — ห้ามทำอะไรเลย
+        if (!allyUnlocked)
+            return;
+
+        // ⬇️ ปุ่มสั่ง Ally ทำงานเฉพาะตอนปลดล็อกแล้ว
         if (Input.GetKeyDown(KeyCode.F))
         {
             currentCommand = AllyCommand.Follow;
-            //ally.FollowPlayer();
             Debug.Log("Follow Me!");
         }
-
 
         if (Input.GetKeyDown(KeyCode.G))
         {
             currentCommand = AllyCommand.Attack;
-            // ally.HandleEnemy();
             Debug.Log("Attack!!");
         }
 
         if (Input.GetKeyDown(KeyCode.H))
         {
             currentCommand = AllyCommand.CollectItem;
-            //ally.TryCollectNearbyItem();
-            Debug.Log("Secrch for items");
+            Debug.Log("Search for items");
         }
 
+        // คำสั่ง AI
         switch (currentCommand)
         {
             case AllyCommand.Follow:
                 ally.FollowPlayer();
                 break;
+
             case AllyCommand.Attack:
                 ally.HandleEnemy();
                 break;
+
             case AllyCommand.CollectItem:
                 ally.TryCollectNearbyItem();
                 break;
+
             case AllyCommand.None:
-                // ���������������դ���觡��� ������ҧ���
                 break;
         }
     }
-}
 
+    // 🔓 ฟังก์ชันให้ Quest ปลดล็อก Ally
+    public void UnlockAlly()
+    {
+        allyUnlocked = true;
+        Debug.Log("Ally unlocked and ready to help!");
+    }
+}

@@ -74,6 +74,17 @@ public class QuestManager : MonoBehaviour
 
     public void CompleteQuest(int index)
     {
+        var tracker = ongoingQuest[index];
+
+        if (tracker != null)
+        {
+            // ดึงจำนวนเงินรางวัลจาก SO_Quest
+            int reward = tracker.trackedQuest.rewardMoney;
+
+            // ⭐ เพิ่มเงิน/score
+            GameManager.Instance.AddScore(reward);
+            Debug.Log("ได้รับ Score จากเควสต์: " + reward);
+        }
         ongoingQuest[index] = null;
         questUI[index].ClearValue();
     }

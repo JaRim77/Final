@@ -7,7 +7,7 @@ public class Coin : Item
     public override void OnCollect(Player player)
     {
         base.OnCollect(player);
-        GameManager.instance.AddScore(ScoreValue);
+        GameManager.Instance.AddScore(ScoreValue);
         SoundManager.instance.PlaySFX(SoundCoin);
         Destroy(gameObject);
     }
