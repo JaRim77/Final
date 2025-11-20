@@ -20,12 +20,14 @@ public class Ally : Character
     public int bondPoints = 0;
     public event System.Action<Ally> OnBondChanged;
 
+    public float attackCooldown = 1f;
+    private float lastAttackTime = 0f;
     private Item itemTarget;
     private NavMeshAgent agent;
     private Character currentEnemy;
     private AllyCommand currentCommand = AllyCommand.Follow;
-    public float attackCooldown = 1f;
-    private float lastAttackTime = 0f;
+
+    protected float timer = 0f;
 
     void Start()
     {
@@ -38,7 +40,9 @@ public class Ally : Character
     void Update()
     {
 
+
     }
+
 
 
     //    if (player == null || _player == null) return;
@@ -71,32 +75,45 @@ public class Ally : Character
 
     public void HandleEnemy()
     {
-        if (currentEnemy == null) DetectEnemy();
+        if (currentEnemy == null)
+            DetectEnemy();
+        animator.SetFloat("Speed", 1);
+
         if (currentEnemy != null)
         {
             float dist = Vector3.Distance(transform.position, currentEnemy.transform.position);
+
             if (dist <= attackRange)
             {
                 agent.isStopped = true;
 
-                if (Time.time - lastAttackTime >= attackCooldown)
+                // ‡™Á§«Ë“æ√ÈÕ¡‚®¡µ’À√◊Õ¬—ß
+                if (Time.time >= lastAttackTime + attackCooldown)
                 {
-                    animator.SetTrigger("Trigger");
+                    animator.SetTrigger("Attack");
+
+                    // ‚®¡µ’µ“¡æ≈—ß‚®¡µ’ Damage ¢Õß Ally
                     currentEnemy.TakeDamage(Damage);
 
-                    lastAttackTime = Time.time;
+                    lastAttackTime = Time.time; // √’‡´Áµ§Ÿ≈¥“«πÏ
+
+                    Debug.Log("Attack" + (Damage));
                 }
             }
-
             else if (dist <= detectRange)
             {
                 agent.isStopped = false;
+                animator.SetFloat("Speed", agent.velocity.magnitude);
+
                 agent.SetDestination(currentEnemy.transform.position);
             }
-            else currentEnemy = null;
+            else
+            {
+                currentEnemy = null;
+            }
         }
-
     }
+
 
     public void FollowPlayer()
     {
@@ -106,7 +123,7 @@ public class Ally : Character
         {
             agent.isStopped = false;
             agent.SetDestination(_player.transform.position);
-            
+
             animator.SetFloat("Speed", agent.velocity.magnitude);
 
         }
@@ -162,7 +179,7 @@ public class Ally : Character
 
             agent.isStopped = false;
             agent.SetDestination(itemTarget.transform.position);
-            animator.SetBool("Moving", true);
+            animator.SetFloat("Speed",1);
 
             Debug.Log("Moving to item: " + itemTarget.name);
             return;
@@ -189,14 +206,14 @@ public class Ally : Character
             currentCommand = AllyCommand.Follow;
 
             agent.isStopped = true;
-            animator.SetBool("Moving", false);
+            animator.SetFloat("Speed", 0);
         }
         else
         {
             agent.isStopped = false;
             agent.SetDestination(itemTarget.transform.position);
-            animator.SetBool("Moving", true);
-            animator.SetFloat("Velocity", agent.velocity.magnitude);
+           
+            animator.SetFloat("Speed", agent.velocity.magnitude);
         }
     }
 
@@ -211,6 +228,7 @@ public class Ally : Character
 
     public void SetTarget(Character enemy)
     {
+
         currentEnemy = enemy;
         currentCommand = AllyCommand.Attack;
     }
