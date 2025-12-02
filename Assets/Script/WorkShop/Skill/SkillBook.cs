@@ -1,40 +1,56 @@
-using System.Collections.Generic;
-using Unity.VisualScripting;
+Ôªøusing System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.TextCore.Text;
 
 public class SkillBook : MonoBehaviour
 {
     public List<Skill> skillsSet = new List<Skill>();
     public GameObject[] skillEffects;
+
     List<Skill> DulationSkills = new List<Skill>();
 
+    public Transform firePoint;      // ‡πÉ‡∏ä‡πâ‡∏Å‡∏±‡∏ö ProjectileSkill
+    public GameObject projectilePrefab;
+
+    public Transform firePoint2;     // ‡πÉ‡∏ä‡πâ‡∏Å‡∏±‡∏ö StationaryProjectileSkill2
+    public GameObject stationaryPrefab;
+
     Player player;
-    public void Start()
+
+    void Start()
     {
-        // ‡æ‘Ë¡ °‘≈µË“ßÊ ‡¢È“‰ª„π List
         player = GetComponent<Player>();
 
+        // -------------------------
+        // ‡∏™‡∏Å‡∏¥‡∏•‡∏à‡∏≤‡∏Å‡∏£‡∏∞‡∏ö‡∏ö‡πÄ‡∏î‡∏¥‡∏° (‡πÑ‡∏°‡πà‡πÅ‡∏Å‡πâ)
+        // -------------------------
         skillsSet.Add(new FireballSkill());
         skillsSet.Add(new HealSkill());
         skillsSet.Add(new BuffSkillMoveSpeed());
+
+        // ‡∏™‡∏Å‡∏¥‡∏•‡∏¢‡∏¥‡∏á projectile ‡πÄ‡∏î‡∏¥‡∏°
+        ProjectileSkill ps = new ProjectileSkill();
+        ps.firePoint = firePoint;
+        ps.projectilePrefab = projectilePrefab;
+        skillsSet.Add(ps);
+
+        // -------------------------
+        // ‚≠ê ‡πÄ‡∏û‡∏¥‡πà‡∏°‡∏™‡∏Å‡∏¥‡∏•‡∏™‡∏£‡πâ‡∏≤‡∏á‡∏ß‡∏±‡∏ï‡∏ñ‡∏∏‡∏Ñ‡πâ‡∏≤‡∏á‡∏ó‡∏µ‡πà‡∏ï‡∏≥‡πÅ‡∏´‡∏ô‡πà‡∏á firePoint2 ‚≠ê
+        // -------------------------
+        StationaryProjectileSkill2 sp2 = new StationaryProjectileSkill2();
+        sp2.projectilePrefab = stationaryPrefab;
+        sp2.firePoint2 = firePoint2;
+        skillsSet.Add(sp2);
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            UseSkill(0); // „™È °‘≈∑’Ë 1 (Fireball)
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            UseSkill(1); // „™È °‘≈∑’Ë 2 (Heal)
-        }
-        else if(Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            UseSkill(2); // „™È °‘≈∑’Ë 3 (Buff Move Speed)
-        }
-        // Õ—ª‡¥µ °‘≈∑’Ë¡’º≈µËÕ‡π◊ËÕß
+        if (Input.GetKeyDown(KeyCode.Alpha1)) UseSkill(0);
+        if (Input.GetKeyDown(KeyCode.Alpha2)) UseSkill(1);
+        if (Input.GetKeyDown(KeyCode.Alpha3)) UseSkill(2);
+        if (Input.GetKeyDown(KeyCode.Alpha4)) UseSkill(3);
+        if (Input.GetKeyDown(KeyCode.Alpha5)) UseSkill(4);  // ‚≠ê ‡∏™‡∏Å‡∏¥‡∏•‡πÉ‡∏´‡∏°‡πà
+
+
         for (int i = DulationSkills.Count - 1; i >= 0; i--)
         {
             DulationSkills[i].UpdateSkill(player);
@@ -47,32 +63,26 @@ public class SkillBook : MonoBehaviour
 
     public void UseSkill(int index)
     {
-        if (index >= 0 && index < skillsSet.Count)
+        if (index < 0 || index >= skillsSet.Count) return;
+
+        Skill skill = skillsSet[index];
+
+        if (!skill.IsReady(Time.time))
         {
-            Skill skill = skillsSet[index];
-        
-            if (!skill.IsReady(Time.time))
-            {
-                Debug.Log($"Skill '{skill.skillName}' is on cooldown. Time remaining: {skill.lastUsedTime + skill.cooldownTime - Time.time:F2}s");
-                return; // ®∫°“√∑”ß“π∂È“ °‘≈µ‘¥§Ÿ≈¥“«πÏ
-            }
-            GameObject g = Instantiate(skillEffects[index], transform.position, Quaternion.identity, transform);
-            Destroy(g, 1);
-            skill.Activate(player);
-            skill.TimeStampSkill(Time.time); // ∫—π∑÷°‡«≈“∑’Ë„™È °‘≈
-            // µ√«® Õ∫«Ë“‡ªÁπ °‘≈∑’Ë¡’º≈µËÕ‡π◊ËÕßÀ√◊Õ‰¡Ë
-            if (skill.timer > 0)
-            {
-                DulationSkills.Add(skill);
-            }
+            Debug.Log($"Skill '{skill.skillName}' cooldown...");
+            return;
         }
-    }
-    private void OnDrawGizmos()
-    {
-        // Set the gizmo color
-        Gizmos.color = Color.yellow;
-        // Draw a wire sphere at the player's position with the fireball's search radius
-        Gizmos.DrawWireSphere(transform.position, 5);
-        
+
+        if (index < skillEffects.Length && skillEffects[index] != null)
+        {
+            GameObject fx = Instantiate(skillEffects[index], transform.position, Quaternion.identity);
+            Destroy(fx, 1);
+        }
+
+        skill.Activate(player);
+        skill.TimeStampSkill(Time.time);
+
+        if (skill.timer > 0)
+            DulationSkills.Add(skill);
     }
 }

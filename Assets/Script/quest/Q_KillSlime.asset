@@ -13,13 +13,18 @@ MonoBehaviour:
   m_Name: Q_KillSlime
   m_EditorClassIdentifier: 
   questName: kill monster
-  questDescription: kill the slime
+  questDescription: kill the skeletons
   objectives:
   - type: 0
-    targetID: Slime
-    requiredAmount: 3
+    targetID: skeletons
+    requiredAmount: 6
     currentAmount: 0
     isCompleted: 0
-  rewardMoney: 50
+  - type: 0
+    targetID: Boss skeletons
+    requiredAmount: 1
+    currentAmount: 0
+    isCompleted: 0
+  rewardMoney: 100
   goldReward: 0
   expReward: 0

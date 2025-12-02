@@ -21,8 +21,7 @@ public class Player : Character
 
     public void FixedUpdate()
     {
-        Move(_inputDirection);
-        Turn(_inputDirection);
+       
         Attack(_isAttacking);
         Interact(_isInteract);
     }

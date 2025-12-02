@@ -18,23 +18,34 @@ public class ShopUI : MonoBehaviour
     public Button speedButton;
     public Button healthButton;
 
+    TPSCameraController cam;
+
     private void OnEnable()
     {
-        UpdateMoneyUI(); // ← อัปเดตทุกครั้งที่เปิดร้าน
+        UpdateMoneyUI();
     }
 
     private void Start()
     {
-        // ผูกปุ่มแค่ครั้งเดียวตอนเริ่มเกม
+        cam = FindObjectOfType<TPSCameraController>();
+
         damageButton.onClick.AddListener(() => TryBuyUpgrade(damageUpgrade));
         speedButton.onClick.AddListener(() => TryBuyUpgrade(speedUpgrade));
         healthButton.onClick.AddListener(() => TryBuyUpgrade(healthUpgrade));
     }
+
     public void Close()
     {
         gameObject.SetActive(false);
-        MouseManager.Instance.LockMouse();   // ⭐ ล็อกเมาส์กลับ
+
+        MouseManager.Instance.LockMouse();       // 🔒 ล็อกเมาส์กลับ
+
+        if (cam != null)
+            cam.canRotate = true;               // ✔ เปิดหมุนกล้องกลับมา
+
+        Debug.Log("❎ ปิดร้านค้า");
     }
+
     public void UpdateMoneyUI()
     {
         moneyText.text = "Money: " + GameManager.Instance.currentScore;
@@ -61,12 +72,10 @@ public class ShopUI : MonoBehaviour
             }
 
             UpdateMoneyUI();
-            Debug.Log("อัปเกรดสำเร็จ!");
         }
         else
         {
             Debug.Log("เงินไม่พอ!");
         }
-
     }
 }
